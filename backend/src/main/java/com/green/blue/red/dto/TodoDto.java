@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @ToString
 @Getter
 @Setter
-
+@Builder
 public class TodoDto {
     private Long tno;
 

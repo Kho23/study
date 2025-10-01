@@ -1,26 +1,28 @@
 package com.green.blue.red.controller;
 
 import com.green.blue.red.domain.Todo;
-import com.green.blue.red.dto.ScoreDto;
+import com.green.blue.red.dto.PageRequestDto;
+import com.green.blue.red.dto.PageResponseDto;
 import com.green.blue.red.dto.TodoDto;
 import com.green.blue.red.repository.TodoRepository;
+import com.green.blue.red.service.TodoService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @Slf4j
-@CrossOrigin(
-        origins = "http://localhost:8080",
-        methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PATCH,RequestMethod.OPTIONS},
-        allowedHeaders = "*")
+@RequiredArgsConstructor
+@RequestMapping("todo")
 public class TodoController {
-    @Autowired
-    public TodoRepository repository;
+    private final TodoService service;
+    private final TodoRepository repository;
 
     Todo toEntity(TodoDto dto){
         Todo t = new Todo();
@@ -40,24 +42,43 @@ public class TodoController {
         return t;
     }
 
-    @GetMapping("/todo/list")
-    public ResponseEntity<List<TodoDto>> list(){
-        return ResponseEntity.ok(repository.findAll().stream().map(this::toDto).toList());
+    @GetMapping("/list")
+    public PageResponseDto<TodoDto> list(PageRequestDto pageRequestDto){
+        return service.list(pageRequestDto);
     }
 
-    @GetMapping("/todo/read/{id}")
-    public ResponseEntity<Optional<Todo>> read(@PathVariable("id") Long id){
-        return ResponseEntity.ok(repository.findById(id));
+    @GetMapping("/read/{id}")
+    public TodoDto get(@PathVariable("id") Long id){
+        log.info("리드 컨트롤러 id:{}",id);
+        return service.get(id);
     }
 
-    @PutMapping("/todo/update")
-    public ResponseEntity<String> update(@RequestBody TodoDto d){
-        Todo t = repository.findById(d.getTno()).get();
-        t.setDueDate(d.getDueDate());
-        t.setWriter(d.getWriter());
-        t.setTitle(d.getTitle());
-        t.setComplete(d.isComplete());
-        repository.save(t);
-        return ResponseEntity.ok("성공");
+//    @PutMapping("/update")
+//    public ResponseEntity<String> update(@RequestBody TodoDto d){
+//        Todo t = repository.findById(d.getTno()).get();
+//        t.setDueDate(d.getDueDate());
+//        t.setWriter(d.getWriter());
+//        t.setTitle(d.getTitle());
+//        t.setComplete(d.isComplete());
+//        repository.save(t);
+//        return ResponseEntity.ok("성공");
+//    }
+    @PostMapping("/")
+    public Map<String, Long> register(@RequestBody TodoDto dto){
+        log.info("todo controller 추가 dt0:{}",dto);
+        Long tno = service.register(dto);
+        return Map.of("tno",tno);
+    }
+    @PutMapping("/{tno}")
+    public Map<String, String> modify(@PathVariable(name="tno") Long tno, TodoDto dto){
+        log.info("수정 컨트롤러 tno:{} dto:{}",tno,dto);
+        dto.setTno(tno);
+        return Map.of("result","성공");
+    }
+    @DeleteMapping("/{tno}")
+    public Map<String, String> remove(@PathVariable(name="tno") Long tno){
+        log.info("삭제 컨트롤러 tno:{}",tno);
+        service.remove(tno);
+        return Map.of("result","성공");
     }
 }

@@ -16,7 +16,7 @@ public class CustomServletConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").allowedOrigins("*")
-                .allowedMethods("HEAD","GET","POST","DELETE","OPTIONS")
+                .allowedMethods("HEAD","GET","POST","DELETE","OPTIONS","PUT")
                 .maxAge(300)
                 .allowedHeaders("Authorization","Cache-Control","Content-Type" );
     }
