@@ -30,10 +30,10 @@ public class TodoServiceImpl implements TodoService {
 
 
     @Override
-    public Long register(TodoDto dto) {
+    public TodoDto register(TodoDto dto) {
         Todo todo = mapper.map(dto, Todo.class);
         Todo savedTodo = repository.save(todo);
-        return savedTodo.getTno();
+        return mapper.map(savedTodo,TodoDto.class);
     }
 
     @Override

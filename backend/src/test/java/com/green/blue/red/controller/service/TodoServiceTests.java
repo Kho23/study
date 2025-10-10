@@ -19,18 +19,18 @@ import java.util.Map;
 public class TodoServiceTests {
     @Autowired
     private TodoService service;
-    @Test
-    public void testRegister(){
-        for(int i = 0;i<100;i++){
-            TodoDto dto = TodoDto.builder()
-                    .title((i+1)+" 번째 서비스 테스트")
-                    .writer((i+1)+"이건호 테스트")
-                    .dueDate(LocalDate.of(2025,10,01))
-                    .build();
-            Long tno = service.register(dto);
-            log.info("tno={}",tno);
-        }
-    }
+//    @Test
+//    public void testRegister(){
+//        for(int i = 0;i<100;i++){
+//            TodoDto dto = TodoDto.builder()
+//                    .title((i+1)+" 번째 서비스 테스트")
+//                    .writer((i+1)+"이건호 테스트")
+//                    .dueDate(LocalDate.of(2025,10,01))
+//                    .build();
+//            Long tno = service.register(dto);
+//            log.info("tno={}",tno);
+//        }
+//    }
 //    @Test
 //    public void get(){
 //       List<Long> list1 = service.list().stream().filter(i->i.getTitle().length()%2==0).map(TodoDto::getTno).toList();

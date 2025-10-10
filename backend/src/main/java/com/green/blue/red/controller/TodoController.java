@@ -24,26 +24,26 @@ public class TodoController {
     private final TodoService service;
     private final TodoRepository repository;
 
-    Todo toEntity(TodoDto dto){
-        Todo t = new Todo();
-        t.setComplete(dto.isComplete());
-        t.setWriter(dto.getWriter());
-        t.setTitle(dto.getTitle());
-        t.setDueDate(dto.getDueDate());
-        return t;
-    }
-    TodoDto toDto(Todo d){
-        TodoDto t = new TodoDto();
-        t.setTno(d.getTno());
-        t.setTitle(d.getTitle());
-        t.setWriter(d.getWriter());
-        t.setComplete(d.isComplete());
-        t.setDueDate(d.getDueDate());
-        return t;
-    }
+//    Todo toEntity(TodoDto dto){
+//        Todo t = new Todo();
+//        t.setComplete(dto.isComplete());
+//        t.setWriter(dto.getWriter());
+//        t.setTitle(dto.getTitle());
+//        t.setDueDate(dto.getDueDate());
+//        return t;
+//    }
+//    TodoDto toDto(Todo d){
+//        TodoDto t = new TodoDto();
+//        t.setTno(d.getTno());
+//        t.setTitle(d.getTitle());
+//        t.setWriter(d.getWriter());
+//        t.setComplete(d.isComplete());
+//        t.setDueDate(d.getDueDate());
+//        return t;
+//    }
 
     @GetMapping("/list")
-    public PageResponseDto<TodoDto> list(PageRequestDto pageRequestDto){
+    public PageResponseDto<TodoDto> list(PageRequestDto pageRequestDto){ //Params 로 list 뒤에 붙은 URL 을 자동으로 가져와준다
         return service.list(pageRequestDto);
     }
 
@@ -64,15 +64,16 @@ public class TodoController {
 //        return ResponseEntity.ok("성공");
 //    }
     @PostMapping("/")
-    public Map<String, Long> register(@RequestBody TodoDto dto){
+    public Map<String, TodoDto> register(@RequestBody TodoDto dto){
         log.info("todo controller 추가 dt0:{}",dto);
-        Long tno = service.register(dto);
-        return Map.of("tno",tno);
+        TodoDto todo = service.register(dto);
+        return Map.of("todo",todo);
     }
     @PutMapping("/{tno}")
-    public Map<String, String> modify(@PathVariable(name="tno") Long tno, TodoDto dto){
+    public Map<String, String> modify(@PathVariable(name="tno") Long tno, @RequestBody TodoDto dto){
         log.info("수정 컨트롤러 tno:{} dto:{}",tno,dto);
         dto.setTno(tno);
+        service.register(dto);
         return Map.of("result","성공");
     }
     @DeleteMapping("/{tno}")
