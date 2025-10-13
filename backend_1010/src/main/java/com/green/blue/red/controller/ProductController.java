@@ -1,9 +1,13 @@
 package com.green.blue.red.controller;
 
+import com.green.blue.red.dto.PageRequestDto;
+import com.green.blue.red.dto.PageResponseDto;
 import com.green.blue.red.dto.ProductDto;
+import com.green.blue.red.service.ProductService;
 import com.green.blue.red.util.CustomFileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,7 @@ import java.util.Map;
 @RequestMapping("/api/products")
 public class ProductController {
     private final CustomFileUtil fileUtil;
+    private final ProductService service;
 
     @PostMapping("/")
     public Map<String, String> register(ProductDto dto){
@@ -27,6 +32,7 @@ public class ProductController {
         List<String> uploadFileNames = fileUtil.saveFiles(files);
         dto.setUploadFileName(uploadFileNames);
         log.info("{}",uploadFileNames);
+        service.register(dto);
         return Map.of("결과","성공");
     }
 
@@ -35,4 +41,11 @@ public class ProductController {
         log.info("이미지 요청 컨트롤러, fileName={}",fileName);
         return fileUtil.getFile(fileName);
     }
+    //페이지당 전체 목록 조회
+    @GetMapping("/list")
+    public PageResponseDto<ProductDto> list(PageRequestDto dto){
+        log.info("list controller.......pageRequest:{}" , dto);
+        return service.getList(dto);
+    }
+
 }

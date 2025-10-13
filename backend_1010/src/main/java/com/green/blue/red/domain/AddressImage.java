@@ -5,12 +5,13 @@ import lombok.*;
 
 @Embeddable
 @Getter
+@Setter
 @ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class ProductImage {
+public class AddressImage {
     private String fileName;
     private int ord;
     private String uuid;
