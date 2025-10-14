@@ -1,10 +1,10 @@
-package com.green.blue.red.dto;
+package com.green.blue.red.test;
 
-import com.green.blue.red.domain.AddressImage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +13,13 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddressDto {
-    private Long ano;
+public class AddressDTO {
+    private long ano;
     private int age;
-    private String dong;
-    private String gu;
     private String city;
     private String name;
-    private List<AddressImage> imageList = new ArrayList<>();
+    private String gu;
+    private String dong;
+
+
 }
