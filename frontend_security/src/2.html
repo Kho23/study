@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      var obj1 = { a: 10, b: 20 };
+      var obj2 = { a: 11, b: 121 };
+      var obj3 = { a: 21, b: 221 };
+      var obj4 = { a: 31, b: 321 };
+      const list = [
+        { a: 10, b: 20, c: 200 },
+        { a: 11, b: 121, c: 3000 },
+        { a: 21, b: 221, c: 4000 },
+        { a: 31, b: 321, c: 5000 },
+      ];
+
+      const result = list.reduce((acc, cur) => {
+        for (const key of Object.keys(cur)) {
+          acc[key] = (acc[key] || 0) + cur[key];
+        }
+        return acc;
+      }, {});
+      var u=[{a:0},{b:0},{c:0}];
+      var index=0;
+      const f=(i,j) => i[j]
+      console.log(result);
+
+      for(i of ['a','b','c']){
+        for(l of list){
+            u[index][i]+=f(l,i)
+        }
+        index++
+      }
+      console.log(u)
+      var re={a:[], b:[], c:[]}
+
+      var aa=list.reduce((acc,cur)=>{
+         for (const key of Object.keys(cur)) {
+          acc[key].push(cur[key])
+        }
+        return acc
+      },{a:[],b:[],c:[]})
+      console.log(aa)
+    </script>
+  </body>
+</html>

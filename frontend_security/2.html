@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function formatDateToInput(val) {
+        if (!val) return "";
+        // val이 "2025-10-10T00:00:00" / "2025-10-10" / Date 등 다양한 형태일 수 있음
+        const d = typeof val === "string" ? new Date(val) : val;
+        console.log('날짜',d,'시간',d.getTime())
+        // 문자열이면 날짜로 바꿔서, 아니면 날짜 그대로 d 에 저장해줌
+        if (Number.isNaN(d.getTime())) return "";
+        // d 가 NaN 또는 Null 이면 "" 반환
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const da = String(d.getDate()).padStart(2, "0");
+        console.log(y,m,da)
+        return `${y}-${m}-${da}`;
+      }
+      const d = formatDateToInput(new Date("2025-1-10"))
+      console.log(d)
+    </script>
+  </body>
+</html>
