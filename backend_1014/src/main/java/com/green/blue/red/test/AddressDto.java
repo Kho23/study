@@ -22,9 +22,4 @@ public class AddressDto {
     private String name;
     private int age;
 
-    @Builder.Default
-    private List<MultipartFile> fileList= new ArrayList<>();
-
-    @Builder.Default
-    private List<String> uploadFile =new ArrayList<>();
 }
