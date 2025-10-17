@@ -1,8 +1,11 @@
 package com.green.blue.red.config;
 
 import com.green.blue.red.controller.formatter.LocalDateFormater;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -19,5 +22,10 @@ public class CustomServletConfig implements WebMvcConfigurer {
                 .allowedMethods("HEAD","GET","POST","DELETE","OPTIONS","PUT")
                 .maxAge(300)
                 .allowedHeaders("Authorization","Cache-Control","Content-Type" );
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();//비밀번호 암호화, 단방향 암호화
     }
 }

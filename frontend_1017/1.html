@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const tasks = [];
+      function generateTasks() {
+        const today = new Date();
+        for (let i = 1; i <= 100; i++) {
+          const tno = i;
+          const title = `Task Title ${i}`;
+          const writer = `Writer${(i % 10) + 1}`;
+          const complete = Math.random() < 0.5; // true/false 랜덤
+
+          // 오늘 기준 -100일 ~ +100일 랜덤 날짜
+          const offset = Math.floor(Math.random() * 201) - 100;
+          const dueDate = new Date(today);
+          dueDate.setDate(today.getDate() + offset);
+
+          tasks.push({
+            tno,
+            title,
+            writer,
+            complete,
+            dueDate: dueDate.toISOString().split("T")[0], // YYYY-MM-DD
+          });
+        }
+        console.log(tasks);
+        return tasks;
+      }
+      let arr = [
+        { tno: [] },
+        { title: [] },
+        { writer: [] },
+        { complete: [] },
+        { dueDate: [] },
+      ];
+      generateTasks();
+
+      tasks.forEach((task) => {
+        arr.forEach((i) => { //arr 하나씩 꺼내옴
+          const key = Object.keys(i)[0];
+          if (key in task) {
+            i[key].push(task[key]);
+          }
+        });
+      });
+      console.log(arr);
+    </script>
+  </body>
+</html>
