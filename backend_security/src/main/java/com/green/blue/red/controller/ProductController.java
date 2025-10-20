@@ -43,12 +43,14 @@ public class ProductController {
         log.info("이미지 요청 컨트롤러, fileName={}",fileName);
         return fileUtil.getFile(fileName);
     }
-    @PreAuthorize("hasAnyRole('ROLE_USERERROR_LOGIN', 'ROLE_ADMIN')")
+
     //페이지당 전체 목록 조회
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+    //Page당 전체 목록 조회
     @GetMapping("/list")
     public PageResponseDto<ProductDto> list(PageRequestDto dto){
-        log.info("list controller.......pageRequest:{}" , dto);
-        return service.getList(dto);
+        log.info("list controller ............. pageRequest:{},start={}",dto);
+        return  service.getList(dto);
     }
 
     @PutMapping("/{pno}")

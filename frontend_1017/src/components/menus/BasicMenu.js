@@ -1,9 +1,10 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-
+import useCustomLogin from "../../hooks/useCustomLogin"
 const BasicMenu = () => {
-  const loginState = useSelector((state) => state.loginSlice);
+  const {loginState, isLogin} = useCustomLogin();
+  console.log("베이직 메뉴 로그인상태:",loginState)
+  console.log(isLogin)
   return (
     <nav id="navbar" className="flex bg-blue-300">
       <div className="w-4/5 bg-gray-500">
@@ -20,7 +21,7 @@ const BasicMenu = () => {
                 <Link to={"/todo"}>Todo</Link>
               </li>
               <li className="pr-6 text-2xl">
-                <Link to={"/products"}>제품</Link>
+                <Link to={"/product"}>제품</Link>
               </li>
             </>
           ) : (
@@ -32,7 +33,7 @@ const BasicMenu = () => {
         <div className="text-white text-sm m-1 rounded">Login</div>
       </div>
       <div className="w-1/5 flex justify-end bg-orange-300 p-4 font-medium">
-        {!loginState.email ? (
+        {!isLogin ? (
           <div className="text-white text-sm m-1 rounded">
             <Link to={"/member/login"}>로그인</Link>
           </div>

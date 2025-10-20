@@ -24,24 +24,6 @@ public class TodoController {
     private final TodoService service;
     private final TodoRepository repository;
 
-//    Todo toEntity(TodoDto dto){
-//        Todo t = new Todo();
-//        t.setComplete(dto.isComplete());
-//        t.setWriter(dto.getWriter());
-//        t.setTitle(dto.getTitle());
-//        t.setDueDate(dto.getDueDate());
-//        return t;
-//    }
-//    TodoDto toDto(Todo d){
-//        TodoDto t = new TodoDto();
-//        t.setTno(d.getTno());
-//        t.setTitle(d.getTitle());
-//        t.setWriter(d.getWriter());
-//        t.setComplete(d.isComplete());
-//        t.setDueDate(d.getDueDate());
-//        return t;
-//    }
-
     @GetMapping("/list")
     public PageResponseDto<TodoDto> list(PageRequestDto pageRequestDto){ //Params 로 list 뒤에 붙은 URL 을 자동으로 가져와준다
         return service.list(pageRequestDto);

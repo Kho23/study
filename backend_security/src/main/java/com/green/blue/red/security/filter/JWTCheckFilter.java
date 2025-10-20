@@ -18,11 +18,11 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class JWTCheckFilter extends OncePerRequestFilter{
+public class JWTCheckFilter extends OncePerRequestFilter {
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
-        String path = request.getRequestURI();
-        log.info("-------------check URI:{}" , path);
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String  path= request.getRequestURI();
+        log.info("---------check uri:{}-------------" ,path);
         if(request.getMethod().equals("OPTIONS")) return true;
         if(path.startsWith("/api/member/")) return true;
         //이미지 조회 경로는 체크하지 않음
@@ -32,32 +32,32 @@ public class JWTCheckFilter extends OncePerRequestFilter{
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("----------JWTCheckFilter-----------");
-        String authHeaderStr = request.getHeader("Authorization");//권한
+        log.info("-------JWTCheckFilter-----------");
+        String authHeaderStr = request.getHeader("Authorization"); //권한
         try {
-            //Bearer accessToken
-            String accessToken  = authHeaderStr.substring(7);
-            Map<String,Object > claims = JWTUtil.validateToken(accessToken);
-            log.info("JWT claims:{}",claims);
-            String email=(String) claims.get("email");
-            String pw=(String) claims.get("pw");
-            String nickname=(String) claims.get("nickname");
-            Boolean social = (Boolean) claims.get("Social");
-            List<String> roleNames = (List<String>) claims.get("roleNames");
-            MemberDto memberDto = new MemberDto(email,pw,nickname,social,roleNames);
-            log.info("---------------------memberDto={} authorities={}",memberDto,memberDto.getAuthorities());
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberDto,pw,memberDto.getAuthorities());
+            //Bearer accssToken..
+            String accessToken = authHeaderStr.substring(7);
+            Map<String,Object> claims = JWTUtil.validateToken(accessToken);
+            log.info("JWT claims: {}" ,claims);
+            String email = (String)  claims.get("email");
+            String pw = (String)  claims.get("pw");
+            String nickname = (String)  claims.get("nickname");
+            Boolean social =(Boolean) claims.get("social");
+            List<String> roleNames=(List<String>) claims.get("roleNames");
+            MemberDto memberDTO= new MemberDto(email,pw,nickname,social.booleanValue(),roleNames);
+            log.info("---------------------memberdto: {} , authorities=> {}",memberDTO,memberDTO.getAuthorities());
+            UsernamePasswordAuthenticationToken authenticationToken=
+                    new UsernamePasswordAuthenticationToken(memberDTO,pw,memberDTO.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request,response);
-
         } catch (Exception e){
-            log.error("JWT Check Error");
+            log.error("JWT Check Error-----------");
             log.error(e.getMessage());
-            filterChain.doFilter(request,response);
+            filterChain.doFilter(request,response);//통과
             Gson gson=new Gson();
-            String msg = gson.toJson(Map.of("error","ERROR)ACCESS_TOKEN"));
+            String  msg = gson.toJson(Map.of("error","ERROR_ACCESS_TOKEN"));
             response.setContentType("application/json");
-            PrintWriter printWriter=response.getWriter();
+            PrintWriter printWriter =response.getWriter();
             printWriter.println(msg);
             printWriter.close();
         }
