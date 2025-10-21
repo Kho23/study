@@ -7,7 +7,7 @@ const initState = {
 const loadMemberCookie = () => {
   //쿠키에서 로그인정보 로딩
   const memberInfo = getCookie("member"); //로그인시 저장된 정보를 가져온다
-  console.log(memberInfo)
+  console.log("제대로 들어오는가?",memberInfo)
   if (memberInfo && memberInfo.nickname)
     memberInfo.nickname = decodeURIComponent(memberInfo.nickname);
   return memberInfo
@@ -20,11 +20,12 @@ const loginSlice = createSlice({
     login: (state, action) => {
       console.log("login...");
       const data = action.payload;
-      return { email: data.email };
+      setCookie("member",JSON.stringify(data),1)
+      return data;
     },
     logout: (state, action) => {
       console.log("logout...");
-      removeCookie("member")
+      removeCookie("member","/")
       return { ...initState };
     },
   },

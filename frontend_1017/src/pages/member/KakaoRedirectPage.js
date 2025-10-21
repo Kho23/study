@@ -8,31 +8,35 @@ import useCustomLogin from "../../hooks/useCustomLogin";
 const KakaoRedirectPage = () => {
   const [searchParams] = useSearchParams();
   const authCode = searchParams.get("code");
-  const {moveTopath} = useCustomLogin();
+  const { moveTopath } = useCustomLogin();
   console.log(authCode);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if(!authCode) return;
-    (async()=>{
+    if (!authCode) return;
+    (async () => {
       try {
         const accessToken = await getAccessToken(authCode);
-        console.log("kakao access_token", accessToken)
-        getMemberWithAccessToken(accessToken).then((memberInfo)=>{
-          console.log("memberInfo",memberInfo)
-          dispatch(login(memberInfo))
-          if(memberInfo&&memberInfo.social){
-            moveTopath("/")
-          }else{
-            moveTopath("/member/modify")
+        console.log("kakao access_token", accessToken);
+        await getMemberWithAccessToken(accessToken).then((memberInfo) => {
+          console.log("memberInfo", memberInfo);
+          dispatch(login(memberInfo));
+          if (memberInfo && !memberInfo.social) {
+            moveTopath("/");
+          } else {
+            moveTopath("/member/modify");
           }
-        })
+        });
       } catch (e) {
-        alert("카카오 토큰 교환 실패")
+        console.error(
+          "FATAL KAKAO TOKEN EXCHANGE ERROR:",
+          e.response ? e.response : e
+        );
+        alert("카카오 토큰 교환 실패");
       }
     })();
-  }, [authCode])
-  
+  }, [authCode, dispatch, moveTopath]);
+
   return (
     <div>
       <div>Kakao Login Redirect</div>

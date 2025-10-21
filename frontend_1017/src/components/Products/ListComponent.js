@@ -31,9 +31,6 @@ const ListComponent = () => {
       setFetching(false);
     });
   }, [page, size, refresh]);
-  const test = (i) => {
-    console.log(i);
-  };
   return (
     <div className="border-2 border-blue-100 mt-10 mr-2 ml-2">
       <h1> ProductList components</h1>

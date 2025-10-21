@@ -4,49 +4,51 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 public class JWTUtil {
-    private static String key = "12345678901234567890123456789012";
-    public static String generateToken(Map<String, Object> valueMap, int min){
-        SecretKey key=null;
-        try {
-            key= Keys.hmacShaKeyFor(JWTUtil.key.getBytes("UTF-8"));
-        } catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
-        String jwtStr= Jwts.builder()
-                .setHeader(Map.of("type","JWT"))
-                .setClaims(valueMap)
-                .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
-                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(min).toInstant()))
-                .compact();
-        return jwtStr;
+
+    // (데모용) 정확히 32바이트: 운영에서는 환경변수/시크릿으로 주입 권장
+    private static final String RAW_SECRET_32B = "12345678901234567890123456789012"; // 32 bytes
+
+    private static SecretKey getKey() {
+        return Keys.hmacShaKeyFor(RAW_SECRET_32B.getBytes(StandardCharsets.UTF_8));
     }
-    public static Map<String, Object> validateToken(String token){
-        Map<String, Object> claim=null;
+
+    public static String generateToken(Map<String, Object> valueMap, int min) {
+        SecretKey key = getKey();
+
+        long now = System.currentTimeMillis();
+        return Jwts.builder()
+                .setHeaderParam("type", "JWT")
+                .setClaims(valueMap)
+                .setIssuedAt(new Date(now))
+                .setExpiration(new Date(now + min * 60_000L))
+                .signWith(key, SignatureAlgorithm.HS256)  // ★ 반드시 서명!
+                .compact();
+    }
+
+    public static Map<String, Object> validateToken(String token) {
         try {
-            SecretKey key = Keys.hmacShaKeyFor(JWTUtil.key.getBytes("UTF-8"));
-            claim=Jwts.parserBuilder()
+            SecretKey key = getKey();
+            return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJwt(token)
+                    .parseClaimsJws(token)
                     .getBody();
-        }catch (MalformedJwtException malformedJwtException){
+        } catch (MalformedJwtException e) {
             throw new CustomJWTException("MalFormed");
-        }catch (ExpiredJwtException expiredJwtException){
+        } catch (ExpiredJwtException e) {
             throw new CustomJWTException("Expired");
-        }catch (InvalidClaimException invalidClaimException){
-            throw new CustomJWTException("invalid");
-        }catch (JwtException jwtException){
+        } catch (InvalidClaimException e) {
+            throw new CustomJWTException("Invalid");
+        } catch (JwtException e) {
             throw new CustomJWTException("JWTError");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new CustomJWTException("Error");
         }
-        return claim;
     }
 }

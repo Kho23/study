@@ -23,23 +23,23 @@ const useCustomLogin = () => {
   const moveToLoginReturn = () => {
     return <Navigate replace to={"/member/login"} />;
   };
-  const exceptionHandle=ex=>{
-    console.log("Exception -----")
-    console.log(ex)
-    const errorMsg = ex.response.data.error
-    const errorStr = createSearchParams({error:errorMsg}).toString()
-    if(errorMsg ==="REQUIRE_LOGIN"){
-      alert("로그인이 필요합니다.")
-      navigate({pathname:"/member/login",search:errorStr})
-      return
+  const exceptionHandle = (ex) => {
+    console.log("Exception -----");
+    console.log(ex);
+    const errorMsg = ex.response.data.error;
+    const errorStr = createSearchParams({ error: errorMsg }).toString();
+    if (errorMsg === "REQUIRE_LOGIN") {
+      alert("로그인이 필요합니다.");
+      navigate({ pathname: "/member/login", search: errorStr });
+      return;
     }
-    if(ex.response.data.error==='ERROR_ACCESSDENIED'){
-      alert("해당 메뉴를 사용할 수 있는 권한이 없습니다.")
-      navigate({pathname:"/member/login",search:errorStr})
-      return 
+    if (ex.response.data.error === "ERROR_ACCESSDENIED") {
+      alert("해당 메뉴를 사용할 수 있는 권한이 없습니다.");
+      navigate({ pathname: "/member/login", search: errorStr });
+      return;
     }
-  }
-  
+  };
+
   return {
     loginState,
     isLogin,
@@ -51,4 +51,4 @@ const useCustomLogin = () => {
     exceptionHandle,
   };
 };
-export default useCustomLogin
+export default useCustomLogin;
