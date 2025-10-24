@@ -13,19 +13,20 @@ import java.util.NoSuchElementException;
 @RestControllerAdvice
 public class CustomControllerAdvice {
     @ExceptionHandler(NoSuchElementException.class)
-    protected ResponseEntity<?> notExist(NoSuchElementException e){
+    protected ResponseEntity<?> notExist(NoSuchElementException e) {
         String msg = e.getMessage();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("msg",msg));
-    }
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<?> handleIllegalArgumentException(MethodArgumentNotValidException e){
-        String msg = e.getMessage();
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(Map.of("msg",msg));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("msg", msg));
     }
 
-    protected ResponseEntity<?> handleJWTException(CustomJWTException e){
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<?> handleIllegalArgumentException(MethodArgumentNotValidException e) {
         String msg = e.getMessage();
-        return ResponseEntity.ok().body(Map.of("error",msg));
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(Map.of("msg", msg));
+    }
+
+    protected ResponseEntity<?> handleJWTException(CustomJWTException e) {
+        String msg = e.getMessage();
+        return ResponseEntity.ok().body(Map.of("error", msg));
     }
 
 

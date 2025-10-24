@@ -46,14 +46,14 @@ public class CustomSecurityConfig {
         });
         http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.csrf(c->c.disable());
+        http.csrf(c -> c.disable());
         http.formLogin(con -> {
             con.loginPage("/api/member/login");
             con.successHandler(new APILoginSuccessHandler());
             con.failureHandler(new APILoginFailHandler());
         });
         http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.exceptionHandling(i->i.accessDeniedHandler(new CustomAccessDeniedHandler()));
+        http.exceptionHandling(i -> i.accessDeniedHandler(new CustomAccessDeniedHandler()));
         return http.build();
     }
 }

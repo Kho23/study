@@ -11,12 +11,21 @@ import java.util.List;
 
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
-    @Query("SELECT NEW com.green.blue.red.dto.CartItemListDto(" +
-            "ci.cino, ci.qty, p.pno, p.pname, p.price, pi.fileName ) " +
-            " FROM CartItem ci INNER JOIN Cart mc ON ci.cart = mc " +
-            " LEFT JOIN Product p ON ci.product = p LEFT JOIN p.imageList pi WHERE mc.owner.email = :email" +
-            " AND pi.ord=0 ORDER BY ci.cino DESC"
-    )
+//    @Query("SELECT NEW com.green.blue.red.dto.CartItemListDto(" +
+//            "ci.cino, ci.qty, p.pno, p.pname, p.price, pi.fileName ) " +
+//            " FROM CartItem ci INNER JOIN Cart mc ON ci.cart = mc " +
+//            " LEFT JOIN Product p ON ci.product = p LEFT JOIN p.imageList pi WHERE mc.owner.email = :email" +
+//            " AND pi.ord=0 ORDER BY ci.cino DESC"
+//    )
+@Query("select " +
+        "new com.green.blue.red.dto.CartItemListDto(ci.cino, ci.qty, p.pno, p.pname, p.price, pi.fileName) "+
+        "from " +
+        "CartItem ci inner join Cart mc on ci.cart = mc " +
+        "left join Product p on ci.product = p " +
+        "left join p.imageList pi " +
+        "where " +
+        "mc.owner.email = :email and pi.ord = 0 " +
+        "order by ci desc ")
     public List<CartItemListDto> getItemOfCartDtoByEmail(@Param("email") String email);
 
     // 🚨 공백 추가: " where" 대신 " WHERE " 또는 다음 줄에 공백 추가

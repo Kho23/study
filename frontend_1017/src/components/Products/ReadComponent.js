@@ -1,14 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getOne, host, postAdd } from "../../api/ProductApi";
 import FetchingModal from "../common/FetchingModal";
-import ResultModal from "../common/ResultModal";
 import useCustomMove from "../../hooks/useCustomMove";
+import useCustomLogin from "../../hooks/useCustomLogin"
 
 const initState = { pname: "", pdesc: "", price: 0, files: [], uploadFileName:[] };
 const ReadComponent = ({pno}) => {
   const [product, setProduct] = useState({ ...initState });
   const [fetching, setFetching] = useState(false);
   const { moveToList, moveToModify } = useCustomMove();
+  const {loginState} = useCustomLogin();
+  const handleClickAdd=()=>{
+    console.log("장바구니 추가 완료")
+    let qty = 1;
+    const addedItem = cartItems.filter((item)=>)
+  }
 
   useEffect(() => {
     setFetching(true);
@@ -55,6 +61,13 @@ const ReadComponent = ({pno}) => {
             onClick={()=>moveToModify(pno)}
           >
             수정
+          </button>
+           <button
+            type="button"
+            className="rounded p-4 w-36 bg-blue-500 text-xl text-white"
+            onClick={moveToList}
+          >
+            목록
           </button>
         </div>
   );

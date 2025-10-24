@@ -19,36 +19,39 @@ public class JWTUtil {
     }
 
     public static String generateToken(Map<String, Object> valueMap, int min) {
+        //JWT 토큰 생성 함수
         SecretKey key = getKey();
-
+        //RAW_SECRET_32B 바탕으로 키를 만듬
         long now = System.currentTimeMillis();
         return Jwts.builder()
-                .setHeaderParam("type", "JWT")
-                .setClaims(valueMap)
-                .setIssuedAt(new Date(now))
-                .setExpiration(new Date(now + min * 60_000L))
-                .signWith(key, SignatureAlgorithm.HS256)  // ★ 반드시 서명!
-                .compact();
+                .setHeaderParam("type", "JWT") //헤더 파라미터를 JWT 토큰 타입으로 설정
+                .setClaims(valueMap)//클레임은 인자로 받는 valueMap(실제 이용자 정보)
+                .setIssuedAt(new Date(now))//토큰 생성시간은 현재시간으로(밀리초 기준)
+                .setExpiration(new Date(now + min * 60_000L))//토큰 만료기간은
+                .signWith(key, SignatureAlgorithm.HS256)  // 시그니처는 key 를 알고리즘 방식으로 설정
+                .compact(); //JWT 컴팩트 룰에 따라 위 정보들을 바탕으로 최종 토큰을 만들어 리턴
     }
 
     public static Map<String, Object> validateToken(String token) {
+        //토큰 유효성 검사하는 함수
         try {
             SecretKey key = getKey();
-            return Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+            //토큰 검증방식을 아래에 설정
+            return Jwts.parserBuilder()//토큰 검증기를 설계한다
+                    .setSigningKey(key)//시그니처를 검증하는데 사용될 토큰 키 설정
+                    .build()//검증기 설계 완료
+                    .parseClaimsJws(token)//인자로 받은 토큰을 바로 검증 시작
+                    .getBody();//검증이 끝나면 최종적으로 클레임 반환
         } catch (MalformedJwtException e) {
-            throw new CustomJWTException("MalFormed");
+            throw new CustomJWTException("MalFormed"); //Base64Url 형식이 아닐때
         } catch (ExpiredJwtException e) {
-            throw new CustomJWTException("Expired");
+            throw new CustomJWTException("Expired"); //만료된 토큰일때
         } catch (InvalidClaimException e) {
-            throw new CustomJWTException("Invalid");
+            throw new CustomJWTException("Invalid");//토큰은 유효하지만 클레임이 유효하지 않을때
         } catch (JwtException e) {
-            throw new CustomJWTException("JWTError");
+            throw new CustomJWTException("JWTError");//JWT 연관 포괄적 오류
         } catch (Exception e) {
-            throw new CustomJWTException("Error");
+            throw new CustomJWTException("Error");//기타 모든 오류
         }
     }
 }

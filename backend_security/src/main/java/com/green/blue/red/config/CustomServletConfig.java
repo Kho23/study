@@ -19,13 +19,13 @@ public class CustomServletConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").allowedOrigins("*")
-                .allowedMethods("HEAD","GET","POST","DELETE","OPTIONS","PUT")
+                .allowedMethods("HEAD", "GET", "POST", "DELETE", "OPTIONS", "PUT")
                 .maxAge(300)
-                .allowedHeaders("Authorization","Cache-Control","Content-Type" );
+                .allowedHeaders("Authorization", "Cache-Control", "Content-Type");
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();//비밀번호 암호화, 단방향 암호화
     }
 }

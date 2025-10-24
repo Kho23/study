@@ -20,7 +20,6 @@ public class SocialController {
     @GetMapping("api/member/kakao")
     public Map<String, Object> getMemberFromKakao(String accessToken){
         log.info("access token ={}",accessToken);
-
         // 1. DTO를 가져옵니다.
         MemberDto memberDto = service.getKakaoMember(accessToken);
 

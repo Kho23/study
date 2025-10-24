@@ -61,7 +61,7 @@ const ListComponent = () => {
           </div>
         ))}
       </div>
-      <PageComponent serverData={serverData} movePage={()=>moveToList()}/>
+      <PageComponent serverData={serverData} movePage={()=>moveToList({page:page,size:size})}/>
     </div>
   );
 };

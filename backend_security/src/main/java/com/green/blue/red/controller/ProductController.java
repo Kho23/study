@@ -45,11 +45,11 @@ public class ProductController {
     }
 
     //페이지당 전체 목록 조회
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     //Page당 전체 목록 조회
     @GetMapping("/list")
     public PageResponseDto<ProductDto> list(PageRequestDto dto){
-        log.info("list controller ............. pageRequest:{},start={}",dto);
+        log.info("list controller ............. pageRequest:{}",dto);
         return  service.getList(dto);
     }
 
@@ -57,7 +57,7 @@ public class ProductController {
     public Map<String, String> modify(@PathVariable("pno") Long pno, ProductDto dto){
         dto.setPno(pno);
         ProductDto oldProductDto=service.get(pno);
-        //기존 파일(DB 파일을 수정과정에서 삭제되었을수도 있음)
+        //기존 파일(DB 파일 수정과정에서 삭제되었을수도 있음)
         List<String> oldFileNames = oldProductDto.getUploadFileName();
         //기존 파일 이름
         List<MultipartFile> files = dto.getFiles();

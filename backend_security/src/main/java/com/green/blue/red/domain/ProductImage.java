@@ -14,5 +14,8 @@ public class ProductImage {
     private String fileName;
     private int ord;
     private String uuid;
-    public void setOrd(int ord){this.ord=ord;}
+
+    public void setOrd(int ord) {
+        this.ord = ord;
+    }
 }

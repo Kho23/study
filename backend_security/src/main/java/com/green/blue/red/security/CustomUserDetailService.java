@@ -15,22 +15,22 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {
     private final MemberRepository memberRepository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("---------------user 이름으로 가져옴-------------",username);
+        log.info("---------------{} 이름으로 가져옴-------------", username);
         Member member = memberRepository.getWithRole(username);
-        if(member==null) {
-            throw
-                new UsernameNotFoundException("Not Found");
-        }
+        if (member == null) throw new UsernameNotFoundException("Not Found");
         MemberDto memberDto = new MemberDto(
                 member.getEmail(),
                 member.getPw(),
                 member.getNickname(),
                 member.isSocial(),
-                member.getMemberRoleList().stream().map(i->i.name()).toList()
-                );
-        log.info("loadUserByUsername memberDto={}",memberDto);
+                member.getMemberRoleList().stream().map(i -> i.name()).toList()
+        );
+        log.info("loadUserByUsername memberDto={}", memberDto);
         return memberDto;
-    };
+    }
+
+    ;
 }

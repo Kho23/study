@@ -26,41 +26,44 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-public class ProductServiceImpl implements  ProductService{
+public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository repository;
 
     @Override
     public PageResponseDto<ProductDto> getList(PageRequestDto dto) {
-        log.info("product Service 전체 조회 : dto:{}",dto);
-        Pageable pageable= PageRequest.of(
-                dto.getPage()-1, //페이지 시작 번호가 0부터 시작하므로
+        log.info("product Service 전체 조회 : dto:{}", dto);
+        Pageable pageable = PageRequest.of(
+                dto.getPage() - 1, //페이지 시작 번호가 0부터 시작하므로
                 dto.getSize(),
                 Sort.by("pno").descending()
         );
-        Page<Object[]> result= repository.selectList(pageable);
-        List<ProductDto> dtoList=result.get().map(i->{
-            Product product =(Product) i[0];
-            ProductImage productImage=(ProductImage) i[1];
+        Page<Object[]> result = repository.selectList(pageable);
+        List<ProductDto> dtoList = result.get().map(i -> {
+            Product product = (Product) i[0];
+            ProductImage productImage = (ProductImage) i[1];
             ProductDto productDTO = ProductDto.builder()
                     .pno(product.getPno())
                     .pname(product.getPname())
                     .pdesc(product.getPdesc())
                     .price(product.getPrice())
                     .build();
-            String  imageStr =productImage.getFileName();
-            productDTO.setUploadFileName(List.of(imageStr));
+            if (productImage != null) {
+                String imageStr = productImage.getFileName();
+                productDTO.setUploadFileName(List.of(imageStr));
+            }
             return productDTO;
         }).toList();
-        long totalCount =result.getTotalElements();
+        long totalCount = result.getTotalElements();
 
-        return  PageResponseDto.<ProductDto>withAll()
+        return PageResponseDto.<ProductDto>withAll()
                 .dtoList(dtoList)
                 .totalCount(totalCount)
                 .pageRequestDto(dto)
                 .build();
     }
-    private Product dtoToEntity(ProductDto dto){
+
+    private Product dtoToEntity(ProductDto dto) {
         Product product = Product.builder()
                 .pno(dto.getPno())
                 .pname(dto.getPname())
@@ -68,33 +71,33 @@ public class ProductServiceImpl implements  ProductService{
                 .price(dto.getPrice())
                 .build();
         List<String> uploadFileNames = dto.getUploadFileName();
-        if(uploadFileNames==null) return product;
-        uploadFileNames.stream().forEach(i->{
+        if (uploadFileNames == null) return product;
+        uploadFileNames.stream().forEach(i -> {
             product.addImageString(i);
         });
         return product;
     }
 
-    private ProductDto entityToDto(Product product){
-        ProductDto productDto= ProductDto.builder()
+    private ProductDto entityToDto(Product product) {
+        ProductDto productDto = ProductDto.builder()
                 .pno(product.getPno())
                 .pname(product.getPname())
                 .price(product.getPrice())
                 .pdesc(product.getPdesc())
                 .build();
-        List<ProductImage> imageList=product.getImageList();
-        if(imageList==null||imageList.size()==0) return productDto;
+        List<ProductImage> imageList = product.getImageList();
+        if (imageList == null || imageList.size() == 0) return productDto;
         List<String> fileNameList = imageList.stream()
                 .map(ProductImage::getFileName).toList();
         productDto.setUploadFileName(fileNameList);
 
-        log.info("fileNameList={}",fileNameList);
+        log.info("fileNameList={}", fileNameList);
         return productDto;
     }
 
     @Override
     public Long register(ProductDto dto) {
-        log.info("service 등록 dto:{}",dto);
+        log.info("service 등록 dto:{}", dto);
         Product product = dtoToEntity(dto);
         Product result = repository.save(product);
         return result.getPno();
@@ -110,7 +113,7 @@ public class ProductServiceImpl implements  ProductService{
 
     @Override
     public void modify(ProductDto dto) {
-        log.info("수정 service 실행 dto={}",dto);
+        log.info("수정 service 실행 dto={}", dto);
         Optional<Product> result = repository.findById(dto.getPno());
         Product product = result.orElseThrow();
         product.changeName(dto.getPname());
@@ -120,13 +123,13 @@ public class ProductServiceImpl implements  ProductService{
 
         //이미지 관련
         List<String> uploadFileNames = dto.getUploadFileName();
-        if(uploadFileNames!=null&&uploadFileNames.size()>0) uploadFileNames.forEach(product::addImageString);
+        if (uploadFileNames != null && uploadFileNames.size() > 0) uploadFileNames.forEach(product::addImageString);
         repository.save(product);
     }
 
     @Override
     public void remove(Long pno) {
-        log.info("삭제 service 실행 pno={}",pno);
-        repository.updateToDelete(pno,true);
+        log.info("삭제 service 실행 pno={}", pno);
+        repository.updateToDelete(pno, true);
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Optional;
 
-public interface ProductRepository extends JpaRepository<Product,Long> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
     @EntityGraph(attributePaths = "imageList")
     @Query("select p from Product p where p.pno=:pno")
     Optional<Product> selectOne(@PathVariable Long pno);
@@ -21,6 +21,8 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query("update Product p set p.delFlag = :flag where p.pno=:pno")
     void updateToDelete(@Param("pno") Long pno, @Param("flag") boolean flag);
 
-    @Query("select p,pi from Product p left join p.imageList pi where pi.ord=0 and p.delFlag=false")
+    @Query
+            (value = "select p,pi from Product p left join p.imageList pi where p.delFlag=false",
+                    countQuery = "select count(p) from Product p where p.delFlag=false")
     Page<Object[]> selectList(Pageable pageable);
 }

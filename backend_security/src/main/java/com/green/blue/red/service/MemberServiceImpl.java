@@ -25,20 +25,26 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
-    private final ModelMapper mapper;
     private final PasswordEncoder encoder;
 
     @Override
     public MemberDto getKakaoMember(String accessToken) {
+        //카카오로그인 시 실행됨
         String email = getEmailFromKakaoAccessToken(accessToken);
-        log.info("email:{}",email);
+        //토큰에서 이메일 정보만 가져온다
+        log.info("email:{}", email);
         Optional<Member> result = memberRepository.findById(email);
-        if(result.isPresent()) return entityToDto(result.get());
+        //DB 에서 이메일이 저장되어있는지 확인한다
+        if (result.isPresent()) return entityToDto(result.get());
+        //DB 에 이미 있으면 기존 회원이니 그대로 리턴한다
         Member socialMember = makeSocialMember(email);
+        //신규 회원이면 이메일 정보로 Member 객체 생성
         memberRepository.save(socialMember);
+        //생성 후 DB에 저장
         return entityToDto(socialMember);
+        //저장된 Member 를 dto 화 후 리턴
     }
 
     @Override
@@ -51,17 +57,17 @@ public class MemberServiceImpl implements MemberService{
         memberRepository.save(member);
     }
 
-    private String makeTempPassword(){
+    private String makeTempPassword() {
         StringBuffer buffer = new StringBuffer();
-        for(int i = 0; i<10 ; i++){
-            buffer.append((char)(int)(Math.random()*55)+65);
+        for (int i = 0; i < 10; i++) {
+            buffer.append((char) (int) (Math.random() * 55) + 65);
         }
         return buffer.toString();
     }
 
-    private Member makeSocialMember(String email){
+    private Member makeSocialMember(String email) {
         String tempPassword = makeTempPassword();
-        log.info("temp Password ={}" , tempPassword);
+        log.info("temp Password ={}", tempPassword);
         String nickname = "소셜회원";
         Member member = Member.builder()
                 .email(email)
@@ -73,23 +79,23 @@ public class MemberServiceImpl implements MemberService{
         return member;
     }
 
-    private String getEmailFromKakaoAccessToken(String accessToken){
+    private String getEmailFromKakaoAccessToken(String accessToken) {
         String kakaoGetUserURL = "https://kapi.kakao.com/v2/user/me";
-        if(accessToken==null) throw new RuntimeException("Access Token is null");
+        if (accessToken == null) throw new RuntimeException("Access Token is null");
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer "+accessToken);
-        headers.add("Content-Type","application/x-www-form-urlencoded");
-        headers.add("Content-Type","application/x-www-form-urlencoded");
+        headers.add("Authorization", "Bearer " + accessToken);
+        headers.add("Content-Type", "application/x-www-form-urlencoded");
+        headers.add("Content-Type", "application/x-www-form-urlencoded");
         HttpEntity<String> entity = new HttpEntity<>(headers);
         UriComponents uriBuilder = UriComponentsBuilder.fromHttpUrl(kakaoGetUserURL).build();
         ResponseEntity<LinkedHashMap> response = restTemplate.exchange(uriBuilder.toString(), HttpMethod.GET, entity, LinkedHashMap.class);
-        log.info("res={}",response);
+        log.info("res={}", response);
         LinkedHashMap<String, LinkedHashMap> bodyMap = response.getBody();
-        log.info("bodyMap={}",bodyMap);
+        log.info("bodyMap={}", bodyMap);
 
         LinkedHashMap<String, String> kakaoAccount = bodyMap.get("kakao_account");
-        log.info("kakaoAccount={}",kakaoAccount);
+        log.info("kakaoAccount={}", kakaoAccount);
         return kakaoAccount.get("email");
     }
 }
